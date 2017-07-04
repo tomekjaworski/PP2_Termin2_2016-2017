@@ -28,14 +28,14 @@ int calc_hash(const char* str)
 	return hash;
 }
 
-struct item_t {
+typedef struct item_t {
 	char word[100];
 	int mark;
 	int hash;
 	struct item_t* pnext;
-};
+} item_t;
 
-struct item_t* find_word(struct item_t* phead, const char* word)
+item_t* find_word(item_t* phead, const char* word)
 {
 	int hash = calc_hash(word);
 
@@ -53,10 +53,10 @@ struct item_t* find_word(struct item_t* phead, const char* word)
 	return NULL;
 }
 
-struct item_t* add_word(struct item_t* phead, const char* word)
+item_t* add_word(item_t* phead, const char* word)
 {
 	// przygotuj nowy element
-	struct item_t* pnew = (struct item_t*)calloc(1, sizeof(item_t));
+	item_t* pnew = (item_t*)calloc(1, sizeof(item_t));
 	assert(pnew != NULL);
 
 	// wypełnij danymi
@@ -68,7 +68,7 @@ struct item_t* add_word(struct item_t* phead, const char* word)
 		return pnew;
 
 	// znajdź ostatni element listy słów
-	struct item_t* plast = phead;
+	item_t* plast = phead;
 	while (plast->pnext != NULL)
 		plast = plast->pnext;
 
@@ -96,13 +96,13 @@ int main()
 	clean(l2);
 
 
-	struct item_t* phead = NULL;
+	item_t* phead = NULL;
 
 	// przetwarzaj tekst 1
 	char* word = strtok(l1, " ");
 	while (word != NULL)
 	{
-		struct item_t* pword = find_word(phead, word);
+		item_t* pword = find_word(phead, word);
 		if (pword == NULL) // dodaj tylko 
 			phead = add_word(phead, word);
 
@@ -113,7 +113,7 @@ int main()
 	word = strtok(l2, " ");
 	while (word != NULL)
 	{
-		struct item_t* pword = find_word(phead, word);
+		item_t* pword = find_word(phead, word);
 		if (pword != NULL)
 		{
 			// słowo było w tekscie 1, oznacz je
@@ -126,18 +126,19 @@ int main()
 	// a słowa, które są w obu plikach posiadają 1 w polu mark.
 	// I tylko te słowa wyświetlamy
 	printf("Lista slow wspolnych dla obu wierszy:\n");
-	for (struct item_t* pword = phead; pword != NULL; pword = pword->pnext)
+	for (item_t* pword = phead; pword != NULL; pword = pword->pnext)
 		if (pword->mark)
 			printf("%s ", pword->word);
 
 	// zwalnianie pamieci
 	while (phead != NULL)
 	{
-		struct item_t* temp = phead;
+		item_t* temp = phead;
 		phead = phead->pnext;
 		free(temp);
 	}
 
+	printf("\n");
     return 0;
 }
 

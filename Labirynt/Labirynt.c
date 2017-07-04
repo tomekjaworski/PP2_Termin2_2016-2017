@@ -7,10 +7,10 @@ int maze_size;
 int start_row, start_col;
 int stop_row, stop_col;
 
-struct step_t {
+typedef struct step_t {
 	struct step_t *up, *down, *left, *right;
 	int r, c;
-};
+} step_t;
 
 void maze_read(const char* file_name, int size)
 {
@@ -55,16 +55,16 @@ void maze_show(int size)
 	}
 }
 
-struct step_t* make_step(int new_col, int new_row)
+step_t* make_step(int new_col, int new_row)
 {
-	struct step_t* pstep = (struct step_t*)calloc(1, sizeof(struct step_t));
+	step_t* pstep = (step_t*)calloc(1, sizeof(step_t));
 	assert(pstep != NULL);
 	pstep->r = new_row;
 	pstep->c = new_col;
 	return pstep;
 }
 
-int go(struct step_t* me) {
+int go(step_t* me) {
 
 	// czy stanąłem w wyjściu?
 	if (me->r == stop_row && me->c == stop_col)

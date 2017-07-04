@@ -4,7 +4,8 @@
 #include <string.h>
 #include <ctype.h> // tolower
 
-struct client_t {
+
+typedef struct  {
 	char* name;
 	char* surname;
 	char* phone;
@@ -12,13 +13,13 @@ struct client_t {
 	// teksty do wykorzystania na potrzeby wyszukiwania i sortowania
 	char *lowered_name_surname; // imię i nazwisko małymi literami
 	char *lowered_surename; // samo nazwisko małymi literami
-};
+} client_t;
 
-struct list_t {
-	struct client_t* pclient;
+typedef struct list_t  {
+	client_t* pclient;
 	struct list_t* pnext; // następny element
 	struct list_t* pprev; // poprzedni element
-};
+} list_t;
 
 enum SORT_ORDER {
 	SO_DESC, // malejące z-a
@@ -27,26 +28,26 @@ enum SORT_ORDER {
 
 // podstawowe funkcje do obsługi struktury client_t
 client_t* client_create(const char* name, const char* surname, const char* phone);
-void client_free(struct client_t* pclient);
+void client_free(client_t* pclient);
 void client_print(const client_t* pclient);
 
 // podstawowe funkcje do obsługi listy
-struct list_t* list_add_end(struct list_t* proot, struct client_t* pclient);
-void list_free(struct list_t* proot);
+list_t* list_add_end(list_t* proot, client_t* pclient);
+void list_free(list_t* proot);
 void list_show(const list_t* proot);
 int list_count(const list_t* proot);
 
 // funkcje do usuwnia
-struct list_t* list_delete_by_index(struct list_t* proot, int index);
-struct list_t* list_delete_by_name(struct list_t* proot, const char* str);
-struct list_t* list_delete(struct list_t* proot, struct list_t* item);
+list_t* list_delete_by_index(list_t* proot, int index);
+list_t* list_delete_by_name(list_t* proot, const char* str);
+list_t* list_delete(list_t* proot, list_t* item);
 
 // funkcje do wyszukiwania/pobierani
-struct list_t* list_get_item_by_index(struct list_t* proot, int index);
-struct list_t* list_get_item_by_name(struct list_t* proot, const char* str);
+list_t* list_get_item_by_index(list_t* proot, int index);
+list_t* list_get_item_by_name(list_t* proot, const char* str);
 
 // sortowanie
-struct list_t* list_sort(struct list_t* proot, enum SORT_ORDER order);
+list_t* list_sort(list_t* proot, enum SORT_ORDER order);
 
 
 //
@@ -84,7 +85,7 @@ client_t* client_create(const char* name, const char* surname, const char* phone
 	return pclient;
 }
 
-void client_free(struct client_t* pclient)
+void client_free(client_t* pclient)
 {
 	free(pclient->name);
 	free(pclient->surname);
@@ -104,10 +105,10 @@ void client_print(const client_t* pclient)
 // ######################
 //
 
-struct list_t* list_add_end(struct list_t* proot, struct client_t* pclient)
+list_t* list_add_end(list_t* proot, client_t* pclient)
 {
 	// przygotuj nowy element do wstawienia do listy
-	struct list_t* pnew = (struct list_t*)calloc(1, sizeof(struct list_t));
+	list_t* pnew = (list_t*)calloc(1, sizeof(list_t));
 	assert(pnew != NULL);
 
 	// wstaw wskaźnik do danych
@@ -118,7 +119,7 @@ struct list_t* list_add_end(struct list_t* proot, struct client_t* pclient)
 		return pnew; // tak, nowy element będzie pierwszym i ostatnim elementem listy
 
 	// nie, nie jest pusta; znajdź ostatni element
-	struct list_t* plast = proot;
+	list_t* plast = proot;
 	while (plast->pnext != NULL)
 		plast = plast->pnext;
 
@@ -144,7 +145,7 @@ void list_show(const list_t* proot)
 	printf("Liczba kontaktow w bazie: %d\n\n", i - 1);
 }
 
-void list_free(struct list_t* proot)
+void list_free(list_t* proot)
 {
 	// Nie ma sensu pisania oddzielnego kodu do zwalniania całej listy, skoro w zadaniu ma być usuwanie
 	// elementu na podstawie pozycji. Można zatem usuwać pierwszy element z listy tak długo, aż lista nie zostanie wyczyszczona
@@ -165,25 +166,25 @@ int list_count(const list_t* proot)
 // ######################
 //
 
-struct list_t* list_delete_by_index(struct list_t* proot, int index)
+list_t* list_delete_by_index(list_t* proot, int index)
 {
 	// pobierz element z listy proot z pozycji index
-	struct list_t* pitem = list_get_item_by_index(proot, index);
+	list_t* pitem = list_get_item_by_index(proot, index);
 
 	// usuń ten element i ewentulanie zwróć nową głowę listy, jeśli modyfikacja głowy była konieczna
 	return list_delete(proot, pitem);
 }
 
-struct list_t* list_delete_by_name(struct list_t* proot, const char* str)
+list_t* list_delete_by_name(list_t* proot, const char* str)
 {
 	// pobierz element z listy proot, któego imie lub nazwisko będzie zawierało napis str
-	struct list_t* pitem = list_get_item_by_name(proot, str);
+	list_t* pitem = list_get_item_by_name(proot, str);
 
 	// usuń ten element i ewentulanie zwróć nową głowę listy, jeśli modyfikacja głowy była konieczna
 	return list_delete(proot, pitem);
 }
 
-struct list_t* list_delete(struct list_t* proot, struct list_t* item)
+list_t* list_delete(list_t* proot, list_t* item)
 {
 	// czy cokolwiek chcę usunąć? (dzieki temu funkcje delete_by_name oraz delete_by_index będą nieco krótsze)
 	if (item == NULL)
@@ -237,7 +238,7 @@ struct list_t* list_delete(struct list_t* proot, struct list_t* item)
 //
 
 
-struct list_t* list_get_item_by_index(struct list_t* proot, int index)
+list_t* list_get_item_by_index( list_t* proot, int index)
 {
 	// czy indeks mieści się w zakresie?
 	if (index < 0 || index >= list_count(proot))
@@ -253,7 +254,7 @@ struct list_t* list_get_item_by_index(struct list_t* proot, int index)
 	return NULL;
 }
 
-struct list_t* list_get_item_by_name(struct list_t* proot, const char* str)
+list_t* list_get_item_by_name(list_t* proot, const char* str)
 {
 	// pomniejsz litery w str; dzięki temu A będzie równe a
 	char str_lowered[1000];
@@ -271,7 +272,7 @@ struct list_t* list_get_item_by_name(struct list_t* proot, const char* str)
 }
 
 
-struct list_t* list_sort(struct list_t* proot, enum SORT_ORDER order)
+list_t* list_sort(list_t* proot, enum SORT_ORDER order)
 {
 	// no dobrze - sortowanie... z tym najwięcej osób miało problemy
 	// ale wbrew pozorom to jest akurat proste do zrobienia, ponieważ: 
@@ -284,14 +285,14 @@ struct list_t* list_sort(struct list_t* proot, enum SORT_ORDER order)
 		dirty = 0;
 		for (int i = 0; i < list_count(proot) - 1; i++)
 		{
-			struct list_t* l1 = list_get_item_by_index(proot, i);
-			struct list_t* l2 = list_get_item_by_index(proot, i + 1);
+			list_t* l1 = list_get_item_by_index(proot, i);
+			list_t* l2 = list_get_item_by_index(proot, i + 1);
 
 			// czy wykonujemy zamianę?
 			if (strcmp(l1->pclient->surname, l2->pclient->surname) > 0 && order == SO_ASC ||
 				strcmp(l1->pclient->surname, l2->pclient->surname) < 0 && order == SO_DESC)
 			{
-				struct client_t* temp = l1->pclient;
+				client_t* temp = l1->pclient;
 				l1->pclient = l2->pclient;
 				l2->pclient = temp;
 
@@ -308,7 +309,7 @@ struct list_t* list_sort(struct list_t* proot, enum SORT_ORDER order)
 
 int main()
 {
-	struct list_t* plist = NULL;
+	list_t* plist = NULL;
 
 	plist = list_add_end(plist, client_create("Hanna","Makowska","555111001"));
 	plist = list_add_end(plist, client_create("Edyta","Koziel","555111002"));
@@ -344,9 +345,13 @@ int main()
 	list_show(plist);
 
 	// znajdowanie kontaktu po nazwisku/imieniu przy ignorowaniu wielości liter
-	struct list_t* pitem = list_get_item_by_name(plist, "jAWoRSki");
+	list_t* pitem = list_get_item_by_name(plist, "jAWoRSki");
 	client_print(pitem->pclient);
 	printf("\n");
+
+	pitem = list_get_item_by_name(plist, "WOJCIK");
+	client_print(pitem->pclient);
+	printf("\n\n");
 
 	// sortowanie kontaktów
 	plist = list_sort(plist, SO_ASC);
