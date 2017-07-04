@@ -127,6 +127,7 @@ void maze_solve(const char* file_name, int size)
 
 int main()
 {
+	// możliwość podania nazwy pliku oraz wielkości labiryntu
 	maze_solve("m:\\.public_html\\pp2\\f7d34a\\labirynt_29x29.txt", 29);
 	//maze_solve("m:\\.public_html\\pp2\\f7d34a\\labirynt_73x73.txt", 73);
 //	maze_solve("m:\\.public_html\\pp2\\f7d34a\\labirynt_101x101.txt", 101);
