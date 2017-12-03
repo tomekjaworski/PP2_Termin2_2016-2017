@@ -20,26 +20,50 @@ int main()
 	printf("\n");
 
 	// znajdź indeksy trzech najmniejszych i trzech największych
-	int idmin[3] = { 0, 1, 2 };
-	int idmax[3] = { 3, 4, 5 };
+	int idmin[3]; // tablica trzech najmniejszych wartości, posortowanych rosnąco
+	int idmax[3]; // tablica trzech największych wartości, posortowanych malejąco
+	
+	int nidmin = 0; // liczba elementów w tablicy idmin
+	int nidmax = 0; // liczba elementów w tablicy idmax
 
 	for (i = 0; i < 20; i++)
 	{
-		// sprawdź, czy i-ta wartość z tablicy values jest mniejsza którejkolwiek z wartości, do których indeksy są przechowywane w tablicy idmin?
-		for (j = 0; j < 3; j++)
-			if (values[i] < values[idmin[j]])
-			{
-				idmin[j] = i;
+		// MINIMUM
+		// Znajdź pozycję (j) w liście zapamiętanych pozycji wartości najmniejszych idmin[],
+		// która będzie mniejsza od wartości values[i].
+		// Konstrukcja ta pozostawi w zmiennej j pozycję 0-2, jeśli w idmin[] jest wartość mniejsza od value[i]
+		// lub wartość 3, jeśli mniejszej nie ma.
+		// Warunek j < 3 && j < nidmin to inaczej j < min(3, nidmin) i oznacza:
+		// "powtarzaj pętle tak długo, jak j < od 3 i nidmin"
+		int j, k;
+		for (j = 0; j < 3 && j < nidmin; j++)
+			if (values[i] <= values[idmin[j]])
 				break;
-			}
 
-		// to samo dla wartości maksymalnych
-		for (j = 0; j < 3; j++)
-			if (values[i] > values[idmax[j]])
-			{
-				idmax[j] = i;
+		// Wszystkie wartości większe należy przesunąć w prawo, aby zrobić mniejsce dla nowej - mniejszej.
+		// Wartość j=3 będzie tutaj dopuszczalna - pętla nie wykona ani jednej iteracji.
+		for (k = 2; k > j; k--)
+			idmin[k] = idmin[k - 1];
+
+		// Jeśli pierwsza pętla znalazła pozycję, to wstaw tam pozycję nowej, najmniejszej wartości
+		if (j != 3)
+		{
+			idmin[k] = i;
+			nidmin++; // zwiększ liczbę pozycji w tablicy idmin o 1
+		}
+
+		// MAKSIMUM - to samo, tylko inny operator porównania (jest >= zamiast <=)
+		for (j = 0; j < 3 && j < nidmax; j++)
+			if (values[i] >= values[idmax[j]])
 				break;
-			}
+
+		for (k = 2; k > j; k--)
+			idmax[k] = idmax[k - 1];
+		if (j != 3)
+		{
+			idmax[k] = i;
+			nidmax++;
+		}
 	}
 
 	// wyświelt wyniki:
